@@ -1,0 +1,32 @@
+import {Random} from 'random';
+import {time} from 'date-and-time';
+
+let GOAL: number = 50000;
+let NUM_RATS: number = 20;
+let INITIAL_MIN_WT: number = 200;
+let INITIAL_MAX_WT: number = 600;
+let INITIAL_MODE_WT: number = 300;
+let MUTATE_ODDS: number = 0.01;
+let MUTATE_MIN: number = 0.5;
+let MUTATE_MAX: number = 1.2;
+const LITTER_SIZE: number = 8;
+const LITTERS_PER_YEAR: number = 10;
+const GENERATION_LIMIT: number = 500;
+
+//keep breeding pairs even
+if (NUM_RATS %2 != 0) {
+    NUM_RATS += 1;
+}
+
+function populate(NUM_RATS, MIN_WT, MAX_WT, MODE_WT): any[] {
+console.log("Initialize a population with a triangular distribution of weights.");
+const weights: number[] = [];
+for (let i = 0; i < NUM_RATS; i++) {
+    const u = Math.random();
+    const x = Math.abs(2* (MODE_WT - MIN_WT) / (MAX_WT - MIN_WT) - 1);
+    const t = u < x ? Math.sqrt(u*x): 1 - Math.sqrt((1-u)*(1-x));
+    const w = MIN_WT + t*(MAX_WT - MIN_WT);
+    weights.push(Math.round(w));
+}
+return weights;
+}

@@ -18,5 +18,9 @@
     "pretest": "npm run compile",
     "posttest": "npm run lint",
     "test": "jest"
+  },
+  "dependencies": {
+    "date-and-time": "^2.4.2",
+    "random": "^4.1.0"
   }
 }
