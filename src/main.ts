@@ -34,7 +34,7 @@ return weights;
 
 function fitness(population = Array(), GOAL) {
     /*Measure population fitness based on an attribute mean vs target. */
-    const ave = ss.mean.apply(population);
+    const ave = ss.mean(population);
     return ave / GOAL;
 }
 
@@ -58,7 +58,7 @@ function breed(males, females, litter_size) {
     males.sort(() => Math.random() - 0.5);
     females.sort(() => Math.random() - 0.5);
 
-    const children = [];
+    const children = Array();
     for (let i = 0; i < females.length; i++) {
         const male = males[i % males.length];
         const female = females[i];
@@ -67,12 +67,12 @@ function breed(males, females, litter_size) {
     return children;
 }
 
-function mutate(children, mutate_odds, mutate_min, mutate_max) {
+function mutate(children, MUTATE_ODDS, MUTATE_MIN, MUTATE_MAX) {
     /*Randomly alter rat weights using input odds and fractional changes. */
     for (let index = 0; index < children.length; index++) {
         const rat = children[index];
-        if (mutate_odds >= Math.random()) {
-            children[index] = Math.round(rat * Math.random() * (mutate_max - mutate_min) + mutate_min); 
+        if (MUTATE_ODDS >= Math.random()) {
+            children[index] = Math.round(rat * Math.random() * (MUTATE_MAX - MUTATE_MIN) + MUTATE_MIN); 
         }
     }
     return children;
@@ -89,19 +89,21 @@ function main() {
     console.log("Initial population fitness = ", popl_fitness);
     console.log("number to retain = ", NUM_RATS);
 
-    const ave_wt = [];
+    const ave_wt = Array();
 
     while (popl_fitness < 1 && generations < GENERATION_LIMIT){
         const [selected_males, selected_females] = select(parents, NUM_RATS);
         let children = breed(selected_males, selected_females, LITTER_SIZE);
         children = mutate(children, MUTATE_ODDS, MUTATE_MIN, MUTATE_MAX);
         parents.push(...selected_males, ...selected_females, ...children);
+        popl_fitness = fitness(parents, GOAL);
         console.log("Generation ", generations,  "fitness = ", popl_fitness.toFixed(4));
-        console.log("foo", parents);
-        ave_wt.push.apply(ss.mean(parents));
+        console.log(parents);
+        const mean_weight = ss.mean(parents);
+        ave_wt.push(mean_weight);
         generations++;
     }
-    console.log("average weight per generation = ", ave_wt);
+    console.log("\naverage weight per generation = ", ave_wt);
     console.log("\nnumber of generations = ", generations);
     console.log("number of years = ", generations / LITTERS_PER_YEAR);
 
